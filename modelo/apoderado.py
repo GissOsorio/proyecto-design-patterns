@@ -1,16 +1,14 @@
 from datetime import datetime
 
-class Paciente:
-    def __init__(self, nombre, fecha_nacimiento, tipo_identificacion, identificacion, contacto, apoderado=None):
+class Apoderado:
+    def __init__(self, nombre, fecha_nacimiento, tipo_identificacion, identificacion):
         self.nombre = nombre
         self.fecha_nacimiento = fecha_nacimiento
         self.tipo_identificacion = tipo_identificacion
         self.identificacion = identificacion
-        self.contacto = contacto
-        self.apoderado = apoderado
 
-    def paciente(self):
-        return f"Paciente: {self.nombre}, {self.fecha_nacimiento}, {self.tipo_identificacion}, {self.identificacion}, {self.contacto.telefono}, {self.apoderado}"
+    def apoderado(self):
+        return f"Apoderado: {self.nombre}, {self.fecha_nacimiento}, {self.tipo_identificacion}, {self.identificacion}"
 
     def es_mayor_de_edad(self):
         fecha_actual = datetime.now()
