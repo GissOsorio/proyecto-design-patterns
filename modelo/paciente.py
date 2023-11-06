@@ -19,3 +19,15 @@ class Paciente:
             return True
         else:
             return False
+
+    def obtener_rango_edad(self):
+        if self.es_mayor_de_edad():
+            return "ADULTO"
+        else:
+            return "PMENOR"
+
+    def tiene_apoderado(self):
+        if self.apoderado:
+            return True
+        else:
+            return False
