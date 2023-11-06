@@ -1,7 +1,7 @@
 class TipoExamen:
-    def __init__(self, nombre, es_horario_especial):
+    def __init__(self, nombre, horario):
         self.nombre = nombre
-        self.es_horario_especial = es_horario_especial
+        self.horario = horario
 
     def tipoExamen(self):
-        return f"TipoExamen: {self.nombre}, {self.es_horario_especial}"
+        return f"TipoExamen: {self.nombre}, {self.horario}"
