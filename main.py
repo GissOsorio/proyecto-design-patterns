@@ -22,8 +22,11 @@ def main():
             paciente = obtener_paciente(partes, contacto)
             tipoExamen = obtener_tipo_examen(partes)
             fecha_hora_examen = revisar_fecha(partes, fecha_actual)
-            examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen)
-            examenes.append(examen)
+            try:
+                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "guardado")
+                examenes.append(examen)
+            except ValueError as e:
+                print("Error:", e)
         elif len(partes) == 15:
             # Con Apoderado
             contacto = obtener_contacto_con_apoderado(partes) 
@@ -31,16 +34,22 @@ def main():
             paciente = obtener_paciente_con_apoderado(partes, contacto, apoderado)
             tipoExamen = obtener_tipo_examen_con_apoderado(partes)
             fecha_hora_examen = revisar_fecha_con_apoderado(partes, fecha_actual)
-            examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen)
-            examenes.append(examen)
+            try:
+                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "guardado")
+                examenes.append(examen)
+            except ValueError as e:
+                print("Error:", e)
         elif len(partes) == 11:
             # Nuevo Examen Sin Apoderado
             contacto = guardar_contacto(partes) 
             paciente = guardar_paciente(partes, contacto)
             tipoExamen = guardar_tipo_examen(partes)
             fecha_hora_examen = guardar_fecha(partes)
-            examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen)
-            examenes.append(examen)
+            try:
+                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "nuevo")
+                examenes.append(examen)
+            except ValueError as e:
+                print("Error:", e)
         elif len(partes) == 16:
             # Nuevo Examen Con Apoderado
             contacto = guardar_contacto_con_apoderado(partes) 
@@ -48,8 +57,11 @@ def main():
             paciente = guardar_paciente_con_apoderado(partes, contacto, apoderado)
             tipoExamen = guardar_tipo_examen_con_apoderado(partes)
             fecha_hora_examen = guardar_fecha_con_apoderado(partes)
-            examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen)
-            examenes.append(examen)
+            try:
+                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "nuevo")
+                examenes.append(examen)
+            except ValueError as e:
+                print("Error:", e)
 
     print("-------------------------------------------------------")
     imprimir_listado_examenes(examenes)
@@ -104,6 +116,7 @@ def guardar_tipo_examen_con_apoderado(partes):
 def guardar_fecha_con_apoderado(partes):
     fecha_examen, hora_examen, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = partes
     fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen),hora_examen)
+
     return fecha_hora_examen
 
 def guardar_contacto(partes):
@@ -154,8 +167,8 @@ def guardar_fecha(partes):
     fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen), hora_examen)
     return fecha_hora_examen
 
-def agregar_examen(paciente, tipoExamen, fecha_hora_examen):
-    examen = Examen(paciente, tipoExamen, fecha_hora_examen)
+def agregar_examen(paciente, tipoExamen, fecha_hora_examen, estado):
+    examen = Examen(paciente, tipoExamen, fecha_hora_examen, estado)
     return examen
 
 def parsear_fecha(textoFecha):
