@@ -11,7 +11,7 @@ class FechaTest(unittest.TestCase):
             fecha = Fecha(fecha)
         self.assertEqual(str(contexto.exception), "El establecimiento solo opera de lunes a viernes from FECHA.")
 
-    def test_es_dia_laborable(self):
+    def test_es_hora_laborable(self):
         with self.assertRaises(ValueError) as contexto:
             fecha = datetime(2023, 1, 5, 6, 0)
             fecha = Fecha(fecha)
