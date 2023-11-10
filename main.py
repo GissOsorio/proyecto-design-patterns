@@ -3,6 +3,7 @@ from modelo.examen import Examen
 from modelo.tipoExamen import TipoExamen
 from modelo.contacto import Contacto
 from modelo.apoderado import Apoderado
+from modelo.fecha import Fecha
 
 from datetime import datetime
 
@@ -23,7 +24,8 @@ def main():
             tipoExamen = obtener_tipo_examen(partes)
             fecha_hora_examen = revisar_fecha(partes, fecha_actual)
             try:
-                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "guardado")
+                fecha = Fecha(fecha_hora_examen)
+                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
                 examenes.append(examen)
             except ValueError as e:
                 print("Error:", e)
@@ -35,7 +37,8 @@ def main():
             tipoExamen = obtener_tipo_examen_con_apoderado(partes)
             fecha_hora_examen = revisar_fecha_con_apoderado(partes, fecha_actual)
             try:
-                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "guardado")
+                fecha = Fecha(fecha_hora_examen)
+                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
                 examenes.append(examen)
             except ValueError as e:
                 print("Error:", e)
@@ -46,7 +49,8 @@ def main():
             tipoExamen = guardar_tipo_examen(partes)
             fecha_hora_examen = guardar_fecha(partes)
             try:
-                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "nuevo")
+                fecha = Fecha(fecha_hora_examen)
+                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "nuevo")
                 examenes.append(examen)
             except ValueError as e:
                 print("Error:", e)
@@ -58,13 +62,26 @@ def main():
             tipoExamen = guardar_tipo_examen_con_apoderado(partes)
             fecha_hora_examen = guardar_fecha_con_apoderado(partes)
             try:
-                examen = agregar_examen(paciente, tipoExamen, fecha_hora_examen, "nuevo")
+                fecha = Fecha(fecha_hora_examen)
+                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
                 examenes.append(examen)
             except ValueError as e:
                 print("Error:", e)
 
     print("-------------------------------------------------------")
     imprimir_listado_examenes(examenes)
+
+def validar_citas_simultaneas(fecha_hora, examenes):
+    contador = 0
+    for examen in examenes:
+        print(examen.fecha_hora_examen)
+        if fecha_hora.date() == examen.fecha_hora_examen.date() and fecha_hora.time() == examen.fecha_hora_examen.time():
+            contador += 1
+            
+    if contador >= 2:
+        return False
+    
+    return True
 
 def obtener_apoderado(partes):
     _, _, _, _, _, _, _, _, _, _, nombre_apoderado, tipo_identificacion_apoderado, identificacion_apoderado, fecha_nacimiento_apoderado, _ = partes
