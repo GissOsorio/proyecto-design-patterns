@@ -4,15 +4,30 @@ from modelo.tipoExamen import TipoExamen
 from modelo.contacto import Contacto
 from modelo.apoderado import Apoderado
 from modelo.fecha import Fecha
-
+from modelo.horarioLaboratorio import HorarioLaboratorio
+from modelo.singletonFileReader import SingletonFileReader
 from datetime import datetime
 
 
 def main():
+    FERIADOS = {"08-10", "11-03"} 
+    HORARIO_APERTURA = "7:00"
+    HORARIO_CIERRE = "16:00"
+    HORARIO_APERTURA_EARLY = "7:00"
+    HORARIO_CIERRE_EARLY = "9:00"
+    DIAS_ATENCION = [0,1,2,3,4]
     nombre_archivo = 'inputs/lab_input.txt'
-    with open(nombre_archivo, 'r') as archivo:
-        lineas = archivo.readlines()
+    horarioLaboratorio = crear_horario_laboratorio(DIAS_ATENCION, HORARIO_APERTURA, HORARIO_CIERRE, FERIADOS)
+    lineas = obtener_datos_desde_archivo(nombre_archivo)
+    examenes = leer_datos(lineas)
+    imprimir_listado_examenes(examenes)
 
+def obtener_datos_desde_archivo(nombre_archivo):
+    singleton_file_reader = SingletonFileReader(nombre_archivo)
+    lineas = singleton_file_reader.read_lines()
+    return lineas
+
+def leer_datos(lineas):
     examenes = []
     for linea in lineas:
         partes = linea.strip().split('|')
@@ -67,9 +82,13 @@ def main():
                 examenes.append(examen)
             except ValueError as e:
                 print("Error:", e)
+    return examenes
 
-    print("-------------------------------------------------------")
-    imprimir_listado_examenes(examenes)
+def crear_horario_laboratorio(dias_semana, HORARIO_APERTURA, HORARIO_CIERRE, dias_feriados):
+    horario_apertura = datetime.strptime(HORARIO_APERTURA, "%H:%M").time()
+    horario_cierre = datetime.strptime(HORARIO_CIERRE, "%H:%M").time()
+    horario_laboratorio = HorarioLaboratorio(dias_semana, horario_apertura, horario_cierre, dias_feriados)
+    return horario_laboratorio
 
 def validar_citas_simultaneas(fecha_hora, examenes):
     contador = 0

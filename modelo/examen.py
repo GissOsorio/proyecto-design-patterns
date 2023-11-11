@@ -69,7 +69,7 @@ class Examen:
         return hora_examen >= hora_apertura.hour and hora_examen < hora_cierre.hour
 
     def es_feriado(self, fecha_hora):
-        fecha_formateada = fecha_hora.strftime("%d-%m")
+        fecha_formateada = fecha_hora.strftime("%m-%d")
         return fecha_formateada in self.FERIADOS
 
     def es_intervalo_de_cita_valido(self, fecha_hora):
