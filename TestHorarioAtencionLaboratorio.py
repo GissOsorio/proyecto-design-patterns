@@ -7,7 +7,7 @@ class TestHorarioAtencionLaboratorio(unittest.TestCase):
     HORARIO_APERTURA = datetime.strptime("7:00", "%H:%M").time()
     HORARIO_CIERRE = datetime.strptime("16:00", "%H:%M").time()
     FERIADOS = {"08-10", "11-03"} 
-    FECHA_HORA_EXAMEN = datetime(2023, 11, 10, 9, 10)
+    FECHA_HORA_EXAMEN = datetime(2023, 11, 10, 9, 0)
 
     def test_es_dia_laborable(self):  
         horario_atencion_laboratorio = HorarioAtencionLaboratorio
