@@ -51,10 +51,12 @@ def leer_examenes_desde_lineas_del_archivo(lineas, horarioLaboratorio):
                 break
             try:
                 fecha = Fecha(fecha_hora_examen)
-                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
+                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
                 examenes.append(examen)
-            except:
-                print("Cita Existente con formato equivocado")
+            except ValueError as e:
+                print(f"Error: {e}")
+            # except:
+            #     print("Cita Existente con formato equivocado")
         elif len(partes) == 11 or len(partes) == 16:
             apoderado = agregar_apoderado(partes)
             paciente = agregar_paciente(partes, apoderado)
@@ -68,10 +70,12 @@ def leer_examenes_desde_lineas_del_archivo(lineas, horarioLaboratorio):
                 break
             try:
                 fecha = Fecha(fecha_hora_examen)
-                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "nuevo")
+                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
                 examenes.append(examen)
-            except:
-                print("No se pudo agregar")
+            except ValueError as e:
+                print(f"Error: {e}")
+            # except:
+            #     print("No se pudo agregar")
 
     return examenes
 
@@ -204,8 +208,8 @@ def agregar_fecha(partes):
     else:
         return None
 
-def agregar_examen(paciente, tipoExamen, fecha_hora_examen, estado):
-    examen = Examen(paciente, tipoExamen, fecha_hora_examen, estado)
+def agregar_examen(paciente, tipoExamen, fecha_hora_examen):
+    examen = Examen(paciente, tipoExamen, fecha_hora_examen)
     return examen
 
 def parsear_fecha(textoFecha):
