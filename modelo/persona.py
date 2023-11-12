@@ -2,6 +2,9 @@ from datetime import datetime
 
 class Persona:
     def __init__(self, nombre, fecha_nacimiento, tipo_identificacion, identificacion, telefono = None, correo = None):
+        if not nombre or fecha_nacimiento is None or not tipo_identificacion or not identificacion:
+            raise ValueError("Faltan datos de la Persona.")
+
         self.nombre = nombre
         self.fecha_nacimiento = fecha_nacimiento
         self.tipo_identificacion = tipo_identificacion

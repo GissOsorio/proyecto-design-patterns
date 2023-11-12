@@ -8,7 +8,7 @@ class Examen:
 
     def __init__(self, paciente, tipo_examen, fecha_hora_examen):
         if paciente is None or fecha_hora_examen is None or tipo_examen is None:
-            raise ValueError("Error: Faltan datos.")
+            raise ValueError("Faltan datos del examen.")
 
         if tipo_examen.horario == "EARLY" and not self.es_hora_especial(fecha_hora_examen):
             raise ValueError("Este tipo de examen solo puede ser realizado en el horario de 7:00 a 9:00.")
@@ -50,12 +50,12 @@ class Examen:
         fecha_nacimiento_apoderado = self.paciente.apoderado.fecha_nacimiento.strftime('%Y-%m-%d')
         print(f"{hora_examen}|{nombre_examen}|{horario_especial_examen}|{nombre_paciente}|{rango_edad_paciente}|{tipo_identificacion_paciente}|{identificacion_paciente}|{telefono_contacto}|{fecha_nacimiento_paciente}|{es_apoderado}|{nombre_apoderado}|{tipo_identificacion_apoderado}|{identificacion_apoderado}|{fecha_nacimiento_apoderado}|") 
 
-    def es_hora_especial(self, fecha_hora):
+    def es_hora_especial(self, fecha_hora_examen):
         hora_apertura = datetime.strptime(self.HORARIO_APERTURA_EARLY, "%H:%M").time()
         hora_cierre = datetime.strptime(self.HORARIO_CIERRE_EARLY, "%H:%M").time()
-        hora_examen = fecha_hora.hour
+        hora_examen = fecha_hora_examen.hour
         return hora_examen >= hora_apertura.hour and hora_examen < hora_cierre.hour
 
-    def es_fecha_futura(self, fecha_hora):
+    def es_fecha_futura(self, fecha_hora_examen):
         ahora = datetime.now()
-        return fecha_hora > ahora
+        return fecha_hora_examen > ahora
