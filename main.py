@@ -37,41 +37,39 @@ def leer_examenes_desde_lineas_del_archivo(lineas, horario_atencion_laboratorio)
     for linea in lineas:
         partes = linea.strip().split('|')
         if len(partes) == 1:
-            fecha_actual = parsear_fecha(partes[0])
+            fecha_actual = partes[0]
         elif len(partes) == 10 or len(partes) == 15:
             try:
                 tipoExamen = leer_tipo_examen(partes)
                 fecha_hora_examen = revisar_fecha(partes, fecha_actual)
+                fecha = FechaHoraExamen(fecha_hora_examen, horario_atencion_laboratorio)
                 apoderado = leer_apoderado(partes)
                 paciente = leer_paciente(partes, apoderado)
                 validar_cita_paciente(paciente, fecha_hora_examen, examenes)
                 validar_citas_simultaneas(fecha_hora_examen, examenes)
-                fecha = FechaHoraExamen(fecha_hora_examen, horario_atencion_laboratorio)
                 fecha.verificar_restricciones()
                 examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
                 examen.cambiar_estado("guardado")
                 examen.contexto.estado.realizar_examen()
                 examenes.append(examen)
             except ValueError as e:
-                print(f"Error: {e}")
-                print("Cita Existente con formato equivocado")
+                print(f"Cita Existente con formato equivocado - Error: {e}")
         elif len(partes) == 11 or len(partes) == 16:
             try:
                 tipoExamen = agregar_tipo_examen(partes)
                 fecha_hora_examen = agregar_fecha(partes)
+                fecha = FechaHoraExamen(fecha_hora_examen, horario_atencion_laboratorio)
                 apoderado = agregar_apoderado(partes)
                 paciente = agregar_paciente(partes, apoderado)
                 validar_cita_paciente(paciente, fecha_hora_examen, examenes)
                 validar_citas_simultaneas(fecha_hora_examen, examenes)
-                fecha = FechaHoraExamen(fecha_hora_examen, horario_atencion_laboratorio)
                 fecha.verificar_restricciones()
                 examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
                 examen.cambiar_estado("nuevo")
                 examen.contexto.estado.realizar_examen()
                 examenes.append(examen)
             except ValueError as e:
-                print(f"Error: {e}")
-                print("No se pudo agregar")
+                print(f"No se pudo agregar - Error: {e}")
 
     return examenes
 
@@ -176,14 +174,10 @@ def revisar_fecha(partes, fecha_actual):
 def agregar_fecha(partes):
     if len(partes) == 11:
         fecha_examen, hora_examen, _, _, _, _, _, _, _, _, _ = partes
-        fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen), hora_examen)
-        return fecha_hora_examen
     elif len(partes) == 16:
         fecha_examen, hora_examen, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = partes
-        fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen), hora_examen)
-        return fecha_hora_examen
-    else:
-        return None
+    
+    return combinar_fecha_hora(fecha_examen, hora_examen)
 
 def agregar_examen(paciente, tipoExamen, fecha_hora_examen):
     examen = Examen(paciente, tipoExamen, fecha_hora_examen)
@@ -191,18 +185,20 @@ def agregar_examen(paciente, tipoExamen, fecha_hora_examen):
 
 def parsear_fecha(textoFecha):
     try:
-        fecha = datetime.strptime(textoFecha, '%Y-%m-%d')
-        return fecha
+        return datetime.strptime(textoFecha, '%Y-%m-%d')
     except ValueError:
-        return None
+        raise ValueError("Fecha AAAA-MM-DD incorrecta")
 
-def combinar_fecha_hora(fecha, hora_string):
+def combinar_fecha_hora(fecha_string, hora_string):
+    if not fecha_string or not hora_string:
+        raise ValueError("Fecha vacía")
     try:
         hora = datetime.strptime(hora_string, '%H:%M')
-        fecha_hora_combinada = datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora.hour, minute=hora.minute)
-        return fecha_hora_combinada
+        fecha = datetime.strptime(fecha_string, '%Y-%m-%d')
+        return datetime(year=fecha.year, month=fecha.month, day=fecha.day, hour=hora.hour, minute=hora.minute)
     except ValueError:
-        return None
+        raise ValueError("Fecha incorrecta")
+
 
 def leer_fechas_examenes(examenes):
     examenes_por_fecha = {}

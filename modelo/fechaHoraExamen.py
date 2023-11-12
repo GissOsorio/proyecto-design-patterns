@@ -3,6 +3,9 @@ from datetime import datetime
 class FechaHoraExamen:
 
     def __init__(self, fecha_hora_examen, horario_atencion_laboratorio):
+        if not fecha_hora_examen or not horario_atencion_laboratorio:
+            raise ValueError("Faltan datos de la fecha y hora del examen.")
+
         self.fecha_hora_examen = fecha_hora_examen
         self.horario_atencion_laboratorio = horario_atencion_laboratorio
     
