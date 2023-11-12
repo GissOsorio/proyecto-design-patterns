@@ -12,7 +12,6 @@ class ExamenContexto:
         elif nuevo_estado == "guardado":
             self.estado = ExamenGuardadoState(self)
         else:
-            print(nuevo_estado)
             raise ValueError("Estado no válido.")
 
     def es_fecha_futura(self, fecha):

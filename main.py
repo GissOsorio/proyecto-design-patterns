@@ -52,6 +52,8 @@ def leer_examenes_desde_lineas_del_archivo(lineas, horarioLaboratorio):
             try:
                 fecha = Fecha(fecha_hora_examen)
                 examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
+                examen.cambiar_estado("guardado")
+                examen.contexto.estado.realizar_examen()
                 examenes.append(examen)
             except ValueError as e:
                 print(f"Error: {e}")
