@@ -46,11 +46,15 @@ def leer_examenes_desde_lineas_del_archivo(lineas, horarioLaboratorio):
             try:
                 validar_cita_paciente(paciente, fecha_hora_examen, examenes)
                 validar_citas_simultaneas(fecha_hora_examen, examenes)
+            except:
+                print("Cita Existente con formato equivocado")
+                break
+            try:
                 fecha = Fecha(fecha_hora_examen)
                 examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
                 examenes.append(examen)
-            except ValueError as e:
-                print("Error:", e)
+            except:
+                print("Cita Existente con formato equivocado")
         elif len(partes) == 11 or len(partes) == 16:
             apoderado = agregar_apoderado(partes)
             paciente = agregar_paciente(partes, apoderado)
@@ -59,15 +63,15 @@ def leer_examenes_desde_lineas_del_archivo(lineas, horarioLaboratorio):
             try:
                 validar_cita_paciente(paciente, fecha_hora_examen, examenes)
                 validar_citas_simultaneas(fecha_hora_examen, examenes)
-            except ValueError as e:
+            except:
+                print("No se pudo agregar")
                 break
-
             try:
                 fecha = Fecha(fecha_hora_examen)
                 examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "nuevo")
                 examenes.append(examen)
-            except ValueError as e:
-                print("Error:", e)
+            except:
+                print("No se pudo agregar")
 
     return examenes
 
