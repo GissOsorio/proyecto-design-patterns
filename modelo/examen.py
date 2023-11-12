@@ -10,6 +10,9 @@ class Examen:
     DIAS_ATENCION = [0,1,2,3,4]
 
     def __init__(self, paciente, tipo_examen, fecha_hora_examen, estado = None):
+        if paciente is None:
+            raise ValueError("Error: Se requiere un paciente para crear un examen.")
+
         self.paciente = paciente
         self.tipo_examen = tipo_examen
         self.estado = estado
@@ -30,7 +33,7 @@ class Examen:
         rango_edad_paciente = self.paciente.obtener_rango_edad()
         tipo_identificacion_paciente = self.paciente.tipo_identificacion
         identificacion_paciente = self.paciente.identificacion
-        telefono_contacto = self.paciente.contacto.telefono
+        telefono_contacto = self.paciente.telefono
         fecha_nacimiento_paciente = self.paciente.fecha_nacimiento.strftime('%Y-%m-%d')
         print(f"{hora_examen}|{nombre_examen}|{horario_especial_examen}|{nombre_paciente}|{rango_edad_paciente}|{tipo_identificacion_paciente}|{identificacion_paciente}|{telefono_contacto}|{fecha_nacimiento_paciente}|") 
 
@@ -43,7 +46,7 @@ class Examen:
         rango_edad_paciente = self.paciente.obtener_rango_edad()
         tipo_identificacion_paciente = self.paciente.tipo_identificacion
         identificacion_paciente = self.paciente.identificacion
-        telefono_contacto = self.paciente.contacto.telefono
+        telefono_contacto = self.paciente.telefono
         fecha_nacimiento_paciente = self.paciente.fecha_nacimiento.strftime('%Y-%m-%d')
         es_apoderado = "APO"
         nombre_apoderado = self.paciente.apoderado.nombre

@@ -1,7 +1,6 @@
 from modelo.paciente import Paciente
 from modelo.examen import Examen
 from modelo.tipoExamen import TipoExamen
-from modelo.contacto import Contacto
 from modelo.apoderado import Apoderado
 from modelo.fecha import Fecha
 from modelo.horarioLaboratorio import HorarioLaboratorio
@@ -18,24 +17,30 @@ def main():
     DIAS_ATENCION = [0,1,2,3,4]
     nombre_archivo = 'inputs/lab_input.txt'
     horarioLaboratorio = crear_horario_laboratorio(DIAS_ATENCION, HORARIO_APERTURA, HORARIO_CIERRE, FERIADOS)
-    lineas = obtener_datos_desde_archivo(nombre_archivo)
-    examenes = leer_datos(lineas)
+    lineas_del_archivo = obtener_datos_desde_archivo(nombre_archivo)
+    examenes = obtener_examenes_desde_lineas_del_archivo(lineas_del_archivo, horarioLaboratorio)
     imprimir_listado_examenes(examenes)
+
+def crear_horario_laboratorio(dias_semana, HORARIO_APERTURA, HORARIO_CIERRE, dias_feriados):
+    horario_apertura = datetime.strptime(HORARIO_APERTURA, "%H:%M").time()
+    horario_cierre = datetime.strptime(HORARIO_CIERRE, "%H:%M").time()
+    horario_laboratorio = HorarioLaboratorio(dias_semana, horario_apertura, horario_cierre, dias_feriados)
+    return horario_laboratorio
 
 def obtener_datos_desde_archivo(nombre_archivo):
     singleton_file_reader = SingletonFileReader(nombre_archivo)
     lineas = singleton_file_reader.read_lines()
     return lineas
 
-def leer_datos(lineas):
+def obtener_examenes_desde_lineas_del_archivo(lineas, horarioLaboratorio):
     examenes = []
     for linea in lineas:
         partes = linea.strip().split('|')
         if len(partes) == 1:
             fecha_actual = parsear_fecha(partes[0])
-        elif len(partes) == 10:
-            contacto = obtener_contacto(partes) 
-            paciente = obtener_paciente(partes, contacto)
+        elif len(partes) == 10 or len(partes) == 15:
+            apoderado = obtener_apoderado(partes)
+            paciente = obtener_paciente(partes, apoderado)
             tipoExamen = obtener_tipo_examen(partes)
             fecha_hora_examen = revisar_fecha(partes, fecha_actual)
             try:
@@ -44,51 +49,33 @@ def leer_datos(lineas):
                 examenes.append(examen)
             except ValueError as e:
                 print("Error:", e)
-        elif len(partes) == 15:
-            # Con Apoderado
-            contacto = obtener_contacto_con_apoderado(partes) 
-            apoderado = obtener_apoderado(partes)
-            paciente = obtener_paciente_con_apoderado(partes, contacto, apoderado)
-            tipoExamen = obtener_tipo_examen_con_apoderado(partes)
-            fecha_hora_examen = revisar_fecha_con_apoderado(partes, fecha_actual)
-            try:
-                fecha = Fecha(fecha_hora_examen)
-                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
-                examenes.append(examen)
-            except ValueError as e:
-                print("Error:", e)
         elif len(partes) == 11:
             # Nuevo Examen Sin Apoderado
-            contacto = guardar_contacto(partes) 
-            paciente = guardar_paciente(partes, contacto)
-            tipoExamen = guardar_tipo_examen(partes)
-            fecha_hora_examen = guardar_fecha(partes)
-            try:
-                fecha = Fecha(fecha_hora_examen)
-                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "nuevo")
-                examenes.append(examen)
-            except ValueError as e:
-                print("Error:", e)
+            # contacto = guardar_contacto(partes) 
+            # paciente = guardar_paciente(partes, contacto)
+            # tipoExamen = guardar_tipo_examen(partes)
+            # fecha_hora_examen = guardar_fecha(partes)
+            # try:
+            #     fecha = Fecha(fecha_hora_examen)
+            #     examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "nuevo")
+            #     examenes.append(examen)
+            # except ValueError as e:
+            print("Error:", )
         elif len(partes) == 16:
             # Nuevo Examen Con Apoderado
-            contacto = guardar_contacto_con_apoderado(partes) 
-            apoderado = guardar_apoderado(partes)
-            paciente = guardar_paciente_con_apoderado(partes, contacto, apoderado)
-            tipoExamen = guardar_tipo_examen_con_apoderado(partes)
-            fecha_hora_examen = guardar_fecha_con_apoderado(partes)
-            try:
-                fecha = Fecha(fecha_hora_examen)
-                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
-                examenes.append(examen)
-            except ValueError as e:
-                print("Error:", e)
+            # contacto = guardar_contacto_con_apoderado(partes) 
+            # apoderado = guardar_apoderado(partes)
+            # paciente = guardar_paciente_con_apoderado(partes, contacto, apoderado)
+            # tipoExamen = guardar_tipo_examen_con_apoderado(partes)
+            # fecha_hora_examen = guardar_fecha_con_apoderado(partes)
+            # try:
+            #     fecha = Fecha(fecha_hora_examen)
+            #     examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
+            #     examenes.append(examen)
+            # except ValueError as e:
+            print("Error:")
     return examenes
 
-def crear_horario_laboratorio(dias_semana, HORARIO_APERTURA, HORARIO_CIERRE, dias_feriados):
-    horario_apertura = datetime.strptime(HORARIO_APERTURA, "%H:%M").time()
-    horario_cierre = datetime.strptime(HORARIO_CIERRE, "%H:%M").time()
-    horario_laboratorio = HorarioLaboratorio(dias_semana, horario_apertura, horario_cierre, dias_feriados)
-    return horario_laboratorio
 
 def validar_citas_simultaneas(fecha_hora, examenes):
     contador = 0
@@ -103,9 +90,16 @@ def validar_citas_simultaneas(fecha_hora, examenes):
     return True
 
 def obtener_apoderado(partes):
-    _, _, _, _, _, _, _, _, _, _, nombre_apoderado, tipo_identificacion_apoderado, identificacion_apoderado, fecha_nacimiento_apoderado, _ = partes
-    apoderado = Apoderado(nombre_apoderado, parsear_fecha(fecha_nacimiento_apoderado), tipo_identificacion_apoderado, identificacion_apoderado)
-    return apoderado
+    correo_contacto = "dummy@hotmail.com"
+    if len(partes) == 15:
+        _, _, _, _, _, _, _, _, _, _, nombre_apoderado, tipo_identificacion_apoderado, identificacion_apoderado, fecha_nacimiento_apoderado, _ = partes
+        try:
+            apoderado = Apoderado(nombre_apoderado, parsear_fecha(fecha_nacimiento_apoderado), tipo_identificacion_apoderado, identificacion_apoderado, _, _)
+            return apoderado
+        except ValueError as e:
+            print(f"Error: {e}")
+    
+    return None
 
 def obtener_paciente_con_apoderado(partes, contacto, apoderado):
     _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, _, fecha_nacimiento_paciente, _, _ ,_ ,_ ,_, _ = partes
@@ -122,6 +116,8 @@ def obtener_tipo_examen_con_apoderado(partes):
     _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _, _, _, _, _, _ = partes
     tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
     return tipoExamen
+
+
 
 def revisar_fecha_con_apoderado(partes, fecha_actual):
     hora_examen, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = partes
@@ -167,20 +163,51 @@ def obtener_contacto(partes):
     contacto = Contacto(telefono_contacto, correo_contacto)
     return contacto
 
-def obtener_paciente(partes, contacto):
-    _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, _, fecha_nacimiento_paciente, _ = partes
-    paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, contacto)
-    return paciente
+def obtener_paciente(partes, apoderado):
+    correo_contacto = "dummy@hotmail.com"
+    if len(partes) == 10:
+        _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, fecha_nacimiento_paciente, _= partes
+        try:
+            paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, correo_contacto)
+            return paciente
+        except ValueError as e:
+            print(f"Error: {e}")
+    elif len(partes) == 15:
+        _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, fecha_nacimiento_paciente, _, _ ,_ ,_ ,_, _ = partes
+        try:
+            paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, correo_contacto, apoderado)
+            return paciente
+        except ValueError as e:
+            print(f"Error: {e}")
+    else:
+        return None
+
+
+
 
 def obtener_tipo_examen(partes):
-    _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _ = partes
-    tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
-    return tipoExamen
+    if len(partes) == 10:
+        _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _ = partes
+        tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
+        return tipoExamen
+    elif len(partes) == 15:
+        _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _, _, _, _, _, _ = partes
+        tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
+        return tipoExamen
+    else:
+        return None
 
 def revisar_fecha(partes, fecha_actual):
-    hora_examen, _, _, _, _, _, _, _, _, _ = partes
-    fecha_hora_examen = combinar_fecha_hora(fecha_actual, hora_examen)
-    return fecha_hora_examen
+    if len(partes) == 10:
+        hora_examen, _, _, _, _, _, _, _, _, _ = partes
+        fecha_hora_examen = combinar_fecha_hora(fecha_actual, hora_examen)
+        return fecha_hora_examen
+    elif len(partes) == 15:
+        hora_examen, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = partes
+        fecha_hora_examen = combinar_fecha_hora(fecha_actual, hora_examen)
+        return fecha_hora_examen
+    else:
+        return None
 
 def guardar_contacto(partes):
     _, _, _, _, _, _, _, _, telefono_contacto, _, _ = partes
@@ -206,6 +233,7 @@ def guardar_fecha(partes):
 def agregar_examen(paciente, tipoExamen, fecha_hora_examen, estado):
     examen = Examen(paciente, tipoExamen, fecha_hora_examen, estado)
     return examen
+
 
 def parsear_fecha(textoFecha):
     try:
