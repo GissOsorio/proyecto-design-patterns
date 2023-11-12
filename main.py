@@ -49,31 +49,18 @@ def obtener_examenes_desde_lineas_del_archivo(lineas, horarioLaboratorio):
                 examenes.append(examen)
             except ValueError as e:
                 print("Error:", e)
-        elif len(partes) == 11:
-            # Nuevo Examen Sin Apoderado
-            # contacto = guardar_contacto(partes) 
-            # paciente = guardar_paciente(partes, contacto)
-            # tipoExamen = guardar_tipo_examen(partes)
-            # fecha_hora_examen = guardar_fecha(partes)
-            # try:
-            #     fecha = Fecha(fecha_hora_examen)
-            #     examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "nuevo")
-            #     examenes.append(examen)
-            # except ValueError as e:
-            print("Error:", )
-        elif len(partes) == 16:
-            # Nuevo Examen Con Apoderado
-            # contacto = guardar_contacto_con_apoderado(partes) 
-            # apoderado = guardar_apoderado(partes)
-            # paciente = guardar_paciente_con_apoderado(partes, contacto, apoderado)
-            # tipoExamen = guardar_tipo_examen_con_apoderado(partes)
-            # fecha_hora_examen = guardar_fecha_con_apoderado(partes)
-            # try:
-            #     fecha = Fecha(fecha_hora_examen)
-            #     examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "guardado")
-            #     examenes.append(examen)
-            # except ValueError as e:
-            print("Error:")
+        elif len(partes) == 11 or len(partes) == 16:
+            apoderado = guardar_apoderado(partes)
+            paciente = guardar_paciente(partes, apoderado)
+            tipoExamen = guardar_tipo_examen(partes)
+            fecha_hora_examen = guardar_fecha(partes)
+            try:
+                fecha = Fecha(fecha_hora_examen)
+                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen, "nuevo")
+                examenes.append(examen)
+            except ValueError as e:
+                print("Error:", e)
+
     return examenes
 
 
@@ -101,6 +88,18 @@ def obtener_apoderado(partes):
     
     return None
 
+def guardar_apoderado(partes):
+    correo_contacto = "dummy@hotmail.com"
+    if len(partes) == 16:
+        _, _, _, _, _, _, _, _, _, _, _, nombre_apoderado, tipo_identificacion_apoderado, identificacion_apoderado, fecha_nacimiento_apoderado, _ = partes
+        try:
+            apoderado = Apoderado(nombre_apoderado, parsear_fecha(fecha_nacimiento_apoderado), tipo_identificacion_apoderado, identificacion_apoderado, _, _)
+            return apoderado
+        except ValueError as e:
+            print(f"Error: {e}")
+    
+    return None
+
 def obtener_paciente_con_apoderado(partes, contacto, apoderado):
     _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, _, fecha_nacimiento_paciente, _, _ ,_ ,_ ,_, _ = partes
     paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, contacto, apoderado)
@@ -112,44 +111,11 @@ def obtener_contacto_con_apoderado(partes):
     contacto = Contacto(telefono_contacto, correo_contacto)
     return contacto
 
-def obtener_tipo_examen_con_apoderado(partes):
-    _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _, _, _, _, _, _ = partes
-    tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
-    return tipoExamen
-
-
-
-def revisar_fecha_con_apoderado(partes, fecha_actual):
-    hora_examen, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = partes
-    fecha_hora_examen = combinar_fecha_hora(fecha_actual, hora_examen)
-    return fecha_hora_examen
-
-def guardar_apoderado(partes):
-    _, _, _, _, _, _, _, _, _, _, _, nombre_apoderado, tipo_identificacion_apoderado, identificacion_apoderado, fecha_nacimiento_apoderado, _ = partes
-    apoderado = Apoderado(nombre_apoderado, parsear_fecha(fecha_nacimiento_apoderado), tipo_identificacion_apoderado, identificacion_apoderado)
-    return apoderado
-
-def guardar_paciente_con_apoderado(partes, contacto, apoderado):
-    _, _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, _, fecha_nacimiento_paciente, _, _ ,_ ,_ ,_, _ = partes
-    paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, contacto, apoderado)
-    return paciente
-
 def guardar_contacto_con_apoderado(partes):
     _, _, _, _, _, _, _, _, telefono_contacto, _, _, _, _, _, _, _ = partes
     correo_contacto = "dummy@hotmail.com"
     contacto = Contacto(telefono_contacto, correo_contacto)
     return contacto
-
-def guardar_tipo_examen_con_apoderado(partes):
-    _, _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _, _, _, _, _, _ = partes
-    tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
-    return tipoExamen
-
-def guardar_fecha_con_apoderado(partes):
-    fecha_examen, hora_examen, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = partes
-    fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen),hora_examen)
-
-    return fecha_hora_examen
 
 def guardar_contacto(partes):
     _, _, _, _, _, _, _, _, telefono_contacto, _, _ = partes
@@ -182,8 +148,24 @@ def obtener_paciente(partes, apoderado):
     else:
         return None
 
-
-
+def guardar_paciente(partes, apoderado):
+    correo_contacto = "dummy@hotmail.com"
+    if len(partes) == 11:
+        _, _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, fecha_nacimiento_paciente, _= partes
+        try:
+            paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, correo_contacto)
+            return paciente
+        except ValueError as e:
+            print(f"Error: {e}")
+    elif len(partes) == 16:
+        _, _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, fecha_nacimiento_paciente, _, _ ,_ ,_ ,_, _ = partes
+        try:
+            paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, telefono_contacto, correo_contacto, apoderado)
+            return paciente
+        except ValueError as e:
+            print(f"Error: {e}")
+    else:
+        return None
 
 def obtener_tipo_examen(partes):
     if len(partes) == 10:
@@ -192,6 +174,18 @@ def obtener_tipo_examen(partes):
         return tipoExamen
     elif len(partes) == 15:
         _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _, _, _, _, _, _ = partes
+        tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
+        return tipoExamen
+    else:
+        return None
+
+def guardar_tipo_examen(partes):
+    if len(partes) == 11:
+        _, _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _ = partes
+        tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
+        return tipoExamen
+    elif len(partes) == 16:
+        _, _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _, _, _, _, _, _ = partes
         tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
         return tipoExamen
     else:
@@ -209,26 +203,23 @@ def revisar_fecha(partes, fecha_actual):
     else:
         return None
 
+def guardar_fecha(partes):
+    if len(partes) == 11:
+        fecha_examen, hora_examen, _, _, _, _, _, _, _, _, _ = partes
+        fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen), hora_examen)
+        return fecha_hora_examen
+    elif len(partes) == 16:
+        fecha_examen, hora_examen, _, _, _, _, _, _, _, _, _, _, _, _, _, _ = partes
+        fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen), hora_examen)
+        return fecha_hora_examen
+    else:
+        return None
+
 def guardar_contacto(partes):
     _, _, _, _, _, _, _, _, telefono_contacto, _, _ = partes
     correo_contacto = "dummy@hotmail.com"
     contacto = Contacto(telefono_contacto, correo_contacto)
     return contacto
-
-def guardar_paciente(partes, contacto):
-    _, _, _, _, nombre_paciente, rango_edad_paciente, tipo_identificacion_paciente, identificacion_paciente, _, fecha_nacimiento_paciente, _ = partes
-    paciente = Paciente(nombre_paciente, parsear_fecha(fecha_nacimiento_paciente), tipo_identificacion_paciente, identificacion_paciente, contacto)
-    return paciente
-
-def guardar_tipo_examen(partes):
-    _, _, nombre_examen, horario_especial_examen, _, _, _, _, _, _, _ = partes
-    tipoExamen = TipoExamen(nombre_examen, horario_especial_examen)
-    return tipoExamen
-
-def guardar_fecha(partes):
-    fecha_examen, hora_examen, _, _, _, _, _, _, _, _, _ = partes
-    fecha_hora_examen = combinar_fecha_hora(parsear_fecha(fecha_examen), hora_examen)
-    return fecha_hora_examen
 
 def agregar_examen(paciente, tipoExamen, fecha_hora_examen, estado):
     examen = Examen(paciente, tipoExamen, fecha_hora_examen, estado)
