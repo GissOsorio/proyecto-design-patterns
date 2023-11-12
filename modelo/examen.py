@@ -18,6 +18,9 @@ class Examen:
         self.tipo_examen = tipo_examen
         self.fecha_hora_examen = fecha_hora_examen
 
+    def cambiar_estado(self, nuevo_estado):
+        self.contexto.cambiar_estado(nuevo_estado)
+
     def imprimir_examen_persona_mayor_de_edad(self):
         hora_examen = self.fecha_hora_examen.strftime("%H:%M")
         nombre_examen = self.tipo_examen.nombre
