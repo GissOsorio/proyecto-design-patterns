@@ -1,6 +1,6 @@
 # proyecto-design-patterns
 1. Diagrama de clases de dominio.
-![image](https://github.com/GissOsorio/proyecto-design-patterns/assets/17515471/24b39c57-781c-4ecd-bede-81d17e9d5426)
+![Proyecto-Page-1 drawio](https://github.com/GissOsorio/proyecto-design-patterns/assets/17515471/f4edac7a-e047-4fa5-8a11-28646880b0a3)
 
 - Patrones implementados y la justificación para usarlos
 Herencia entre Persona, Paciente y Apoderado
