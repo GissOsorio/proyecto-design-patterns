@@ -36,7 +36,7 @@ class SingletonFileReader:
 ```
 
 ## Clean Code y SOLID
-+ Se hizo el uso de código claro e intuitivo además bloques pequeños de código que además nos ayudaran a la creación de unit test claros y funcionales. A continuación un ejemplo.
++ Se hizo el uso de código claro e intuitivo además bloques pequeños de código que nos ayudarán a la creación de Unit Test claros y funcionales. A continuación un ejemplo.
 
 Código
 
