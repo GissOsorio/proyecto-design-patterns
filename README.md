@@ -13,7 +13,9 @@ Aplicación de consola en python para la reserva de citas médicas, enfocado en 
 ## Patrones implementados y la justificación para usarlos 
 + Herencia entre Persona, Paciente y Apoderado
 + **Singleton** para leer el archivo de texto, generalmente no es necesario aplicar el patrón Singleton directamente, pero lo aplicamos para hacer la referencia como si fuese una base de datos.
-+ **State** para los estados de la clase examen, por el momento hay dos estados, Nuevo y Guardado
++ **State** es utilizado para modelar objetos que pueden cambiar su comportamiento de su estado interno, en este caso se modifica los estados de la clase examen. Un examen de laboratorio clínico puede encontrarse en uno de estos dos estados, **Nuevo y Guardado**.
+También lo usamos para agregar la verificación de la fecha_hora_examen y verificar que sea una fecha futura en el estado **Nuevo**, la verificación de la fecha futura se realiza en el método realizar_examen del estado **ExamenNuevoState**. Si la fecha es futura, se realiza el examen y se cambia al estado **Realizado**. Si la fecha está en el pasado, se imprime un mensaje indicando que no se puede realizar el examen en una fecha pasada.
+Adicionalmente podemos ampliar para mas estados como examen **Realizado**
 
 A continuación un ejemplo del patrón **Singleton**.
 
