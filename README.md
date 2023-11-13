@@ -21,21 +21,18 @@ Aplicación de consola en python para la reserva de citas médicas, enfocado en 
 Código
 
 ```python
-def es_fecha_futura(self, fecha_hora_examen):
-	ahora = datetime.now()
-	return fecha_hora_examen > ahora   
+def es_dia_laborable(self, fecha):
+	return fecha.weekday() in self.dias_semana
 ```
 
 Unit Test
 
 ```python
-def test_es_fecha_futura(self):  
-	examen = Examen
-	examen.horario_apertura = self.HORARIO_APERTURA_EARLY
-	examen.horario_cierre = self.HORARIO_CIERRE_EARLY
-
-	es_fecha_futura = examen.es_fecha_futura(examen, self.FECHA_HORA_EXAMEN)
-	self.assertEqual(es_fecha_futura, False)     
+def test_es_dia_laborable(self):  
+	horario_atencion_laboratorio = HorarioAtencionLaboratorio
+	horario_atencion_laboratorio.dias_semana = self.DIAS_ATENCION
+	esDiaLaborable = horario_atencion_laboratorio.es_dia_laborable(horario_atencion_laboratorio, self.FECHA_HORA_EXAMEN)
+	self.assertEqual(esDiaLaborable, True)      
 ```
 
 ## Cómo ejecutar el código en ambiente local
