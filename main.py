@@ -7,7 +7,6 @@ from modelo.horarioAtencionLaboratorio import HorarioAtencionLaboratorio
 from modelo.singletonFileReader import SingletonFileReader
 from datetime import datetime
 
-
 def main():
     FERIADOS = {"08-10", "11-03"} 
     HORARIO_APERTURA = "7:00"
@@ -42,37 +41,33 @@ def leer_examenes_desde_lineas_del_archivo(lineas, horario_atencion_laboratorio)
             try:
                 tipoExamen = leer_tipo_examen(partes)
                 fecha_hora_examen = revisar_fecha(partes, fecha_actual)
-                fecha = FechaHoraExamen(fecha_hora_examen, horario_atencion_laboratorio)
                 apoderado = leer_apoderado(partes)
                 paciente = leer_paciente(partes, apoderado)
-                validar_cita_paciente(paciente, fecha_hora_examen, examenes)
-                validar_citas_simultaneas(fecha_hora_examen, examenes)
-                fecha.verificar_restricciones()
-                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
-                examen.cambiar_estado("guardado")
-                examen.contexto.estado.realizar_examen()
-                examenes.append(examen)
+                examenes = agregar_examen_a_examenes("guardado", paciente, fecha_hora_examen, examenes, tipoExamen, horario_atencion_laboratorio)
             except ValueError as e:
                 print(f"Cita Existente con formato equivocado - Error: {e}")
         elif len(partes) == 11 or len(partes) == 16:
             try:
                 tipoExamen = agregar_tipo_examen(partes)
                 fecha_hora_examen = agregar_fecha(partes)
-                fecha = FechaHoraExamen(fecha_hora_examen, horario_atencion_laboratorio)
                 apoderado = agregar_apoderado(partes)
                 paciente = agregar_paciente(partes, apoderado)
-                validar_cita_paciente(paciente, fecha_hora_examen, examenes)
-                validar_citas_simultaneas(fecha_hora_examen, examenes)
-                fecha.verificar_restricciones()
-                examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
-                examen.cambiar_estado("nuevo")
-                examen.contexto.estado.realizar_examen()
-                examenes.append(examen)
+                examenes = agregar_examen_a_examenes("nuevo", paciente, fecha_hora_examen, examenes, tipoExamen, horario_atencion_laboratorio)
             except ValueError as e:
                 print(f"No se pudo agregar - Error: {e}")
 
     return examenes
 
+def agregar_examen_a_examenes(estado, paciente, fecha_hora_examen, examenes, tipoExamen, horario_atencion_laboratorio):
+    fecha = FechaHoraExamen(fecha_hora_examen, horario_atencion_laboratorio)
+    validar_cita_paciente(paciente, fecha_hora_examen, examenes)
+    validar_citas_simultaneas(fecha_hora_examen, examenes)
+    fecha.verificar_restricciones()
+    examen = agregar_examen(paciente, tipoExamen, fecha.fecha_hora_examen)
+    examen.cambiar_estado(estado)
+    examen.contexto.estado.realizar_examen()
+    examenes.append(examen)
+    return examenes
 
 def validar_citas_simultaneas(fecha_hora_nuevo_examen, examenes):
     contador = 1
@@ -199,7 +194,6 @@ def combinar_fecha_hora(fecha_string, hora_string):
     except ValueError:
         raise ValueError("Fecha incorrecta")
 
-
 def leer_fechas_examenes(examenes):
     examenes_por_fecha = {}
     for examen in examenes:
@@ -211,6 +205,7 @@ def leer_fechas_examenes(examenes):
     return examenes_por_fecha
 
 def imprimir_listado_examenes(examenes):
+    examenes.sort(key=lambda x: x.fecha_hora_examen)
     examenes_por_fecha = leer_fechas_examenes(examenes)
     for fecha, ex_list in examenes_por_fecha.items():
         print(fecha)
