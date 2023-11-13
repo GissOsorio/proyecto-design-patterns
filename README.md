@@ -1,4 +1,9 @@
-# proyecto-design-patterns
+# Proyecto Final - design-patterns
+
+## Integrantes.
++ Gisela Elizabeth Osorio Tibán
++ Luis Fernando Campos Sánchez
+
 ## Diagrama de clases de dominio.
 ![Proyecto-Page-1 drawio](https://github.com/GissOsorio/proyecto-design-patterns/assets/17515471/f4edac7a-e047-4fa5-8a11-28646880b0a3)
 
@@ -9,7 +14,6 @@
 + Bloques pequeños de código mostrando evidencia de uso de principios SOLID
 
 ## Cómo ejecutar el código en ambiente local
-
 La forma más común de ejecutar los scripts de Python es usar la línea de comandos o la terminal. Veamos los pasos para ejecutar los scripts de Python usando la línea de comandos o la terminal.
 
 + Instalar Python desde la Microsoft Store, la version mas actual.
