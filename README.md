@@ -15,6 +15,26 @@ Aplicación de consola en python para la reserva de citas médicas, enfocado en 
 + **Singleton** para leer el archivo de texto, generalmente no es necesario aplicar el patrón Singleton directamente, pero lo aplicamos para hacer la referencia como si fuese una base de datos.
 + **State** para los estados de la clase examen, por el momento hay dos estados, Nuevo y Guardado
 
+A continuación un ejemplo del patrón **Singleton**.
+
+Código
+
+```python
+class SingletonFileReader:
+    _instance = None
+
+    def __new__(cls, filename):
+        if cls._instance is None:
+            cls._instance = super(SingletonFileReader, cls).__new__(cls)
+            cls._instance.filename = filename
+        return cls._instance
+
+    def read_lines(self):
+        with open(self.filename, 'r') as file:
+            lines = file.readlines()
+        return lines
+```
+
 ## Clean Code y SOLID
 + Se hizo el uso de código claro e intuitivo además bloques pequeños de código que además nos ayudaran a la creación de unit test claros y funcionales. A continuación un ejemplo.
 
@@ -38,7 +58,7 @@ def test_es_dia_laborable(self):
 ## Cómo ejecutar el código en ambiente local
 La forma más común de ejecutar los scripts de Python es usar la línea de comandos o la terminal. Veamos los pasos para ejecutar los scripts con Python.
 
-+ Instalar Python desde la Microsoft Store, la version mas actual.
++ Instale Python desde Microsoft Store, la versión actual.
 + Abra su línea de comando o terminal.
 + Navegue hasta el directorio donde se encuentra su secuencia de comandos de Python.
 + Ejecute el script con el comando **python main.py** .
