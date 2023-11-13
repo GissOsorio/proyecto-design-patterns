@@ -65,4 +65,4 @@ La forma más común de ejecutar los scripts de Python es usar la línea de coma
 
 Hecho. Puede ver el resultado en la siguiente línea.
 Puede ejecutar los scripts de Python con los pasos anteriores independientemente de su sistema operativo. Los pasos anteriores funcionan con todos los principales sistemas operativos.
-En el caso de los **UnitTests**  es similar, ejecute el script que desee por ejemplo **python TestMain.py** o **python TestHorarioAtencionLaboratorio.py** .
+En el caso de los **UnitTests**  es similar, ejecute el script que desee por ejemplo **python tests.py** 
