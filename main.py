@@ -211,6 +211,7 @@ def leer_fechas_examenes(examenes):
     return examenes_por_fecha
 
 def imprimir_listado_examenes(examenes):
+    examenes.sort(key=lambda x: x.fecha_hora_examen)
     examenes_por_fecha = leer_fechas_examenes(examenes)
     for fecha, ex_list in examenes_por_fecha.items():
         print(fecha)
